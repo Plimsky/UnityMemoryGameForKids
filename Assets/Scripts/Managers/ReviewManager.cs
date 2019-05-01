@@ -1,9 +1,9 @@
+using System.Collections;
 using System.Collections.Generic;
 using Data;
 using DG.Tweening;
 using Review;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Managers
 {
@@ -25,12 +25,17 @@ namespace Managers
                 Destroy(gameObject);
 
             m_canvasGroup       = GetComponent<CanvasGroup>();
-            m_canvasGroup.alpha = 0.0f;
+            // m_canvasGroup.alpha = 0.0f;
             gameObject.SetActive(false);
             AnswerButtonReference.GoodAnswser += ShuffleAnswers;
         }
 
         private void ShuffleAnswers()
+        {
+            StartCoroutine(ShuffleAnswersCoroutine());
+        }
+
+        private IEnumerator ShuffleAnswersCoroutine()
         {
             m_answerButtonReferences.Shuffle();
 
@@ -38,19 +43,24 @@ namespace Managers
             {
                 for (int i = 0; i < m_answerButtonReferences.Count; ++i)
                 {
-                    m_answerButtonReferences[i].Populate(m_currentTraining.m_listOfCards[i]);
-//                    var image = m_answerButtonReferences[i].ImageButton;
-//                    var text = m_answerButtonReferences[i].TextButton;
+                    var buttonReference = m_answerButtonReferences[i];
+                    var card = m_currentTraining.m_listOfCards[i];
+                    var image = buttonReference.ImageButton;
+                    var text = buttonReference.TextButton;
 
-//                    Sequence sequence = DOTween.Sequence();
-//
-//                    sequence.Append(image.DOFade(0.0f, 0.25f));
-//                    sequence.Join(text.DOFade(0.0f, 0.25f));
-//                    sequence.AppendCallback(() => m_answerButtonReferences[i].Populate(m_currentTraining.m_listOfCards[i]));
-//                    sequence.Append(text.DOFade(1.0f, 0.25f));
-//                    sequence.Join(image.DOFade(1.0f, 0.25f));
+                    Sequence sequence = DOTween.Sequence();
+
+                    sequence.Append(image.DOFade(0.0f, 0.25f));
+                    sequence.Join(text.DOFade(0.0f, 0.25f));
+                    sequence.AppendCallback(() => buttonReference.Populate(card));
+                    sequence.Append(text.DOFade(1.0f, 0.25f));
+                    sequence.Join(image.DOFade(1.0f, 0.25f));
+
+                    yield return new WaitForSeconds (0.20f);
                 }
             }
+
+            yield return null;
         }
 
         public void PopulateAnswers(TrainingSo p_currentTraining)
@@ -62,12 +72,12 @@ namespace Managers
         public void ShowListAnswers()
         {
             gameObject.SetActive(true);
-            DOTween.To(p_value => m_canvasGroup.alpha = p_value, 0.0f, 1.0f, m_speedFadeListAnswers);
+            // DOTween.To(p_value => m_canvasGroup.alpha = p_value, 0.0f, 1.0f, m_speedFadeListAnswers);
         }
 
         public void HideListAnswers()
         {
-            DOTween.To(p_value => m_canvasGroup.alpha = p_value, 1.0f, 0.0f, m_speedFadeListAnswers);
+            // DOTween.To(p_value => m_canvasGroup.alpha = p_value, 1.0f, 0.0f, m_speedFadeListAnswers);
             gameObject.SetActive(false);
         }
     }

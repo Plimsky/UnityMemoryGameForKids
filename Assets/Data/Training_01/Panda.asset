@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_frontSprite: {fileID: 5758861361426822821, guid: b334997917ca94942b1568b345d2f1db,
     type: 3}
-  m_frontTitle: Un Panda
+  m_frontTitle: Panda
   m_backSprite: {fileID: 0}
-  m_backTitle: A Panda
+  m_backTitle: Panda

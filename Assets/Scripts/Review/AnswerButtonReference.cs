@@ -42,7 +42,7 @@ namespace Review
         {
             m_button.onClick.AddListener(CheckAnswer);
             m_button.interactable = false;
-            m_imageColor          = new Color(m_image.color.r, m_image.color.g, m_image.color.b, m_image.color.a);
+            m_imageColor          = new Color(m_image.color.r, m_image.color.g, m_image.color.b, 1);
         }
 
         private void CheckAnswer()

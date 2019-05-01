@@ -4,6 +4,7 @@ using Data;
 using DG.Tweening;
 using Review;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Managers
 {
@@ -24,13 +25,11 @@ namespace Managers
             else
                 Destroy(gameObject);
 
-            m_canvasGroup       = GetComponent<CanvasGroup>();
-            // m_canvasGroup.alpha = 0.0f;
-            gameObject.SetActive(false);
-            AnswerButtonReference.GoodAnswser += ShuffleAnswers;
+            m_canvasGroup = GetComponent<CanvasGroup>();
+            DisableListAnswers();
         }
 
-        private void ShuffleAnswers()
+        public void ShuffleAnswers()
         {
             StartCoroutine(ShuffleAnswersCoroutine());
         }
@@ -44,19 +43,18 @@ namespace Managers
                 for (int i = 0; i < m_answerButtonReferences.Count; ++i)
                 {
                     var buttonReference = m_answerButtonReferences[i];
-                    var card = m_currentTraining.m_listOfCards[i];
-                    var image = buttonReference.ImageButton;
-                    var text = buttonReference.TextButton;
+                    var card            = m_currentTraining.m_listOfCards[i];
+                    var image           = buttonReference.ImageButton;
+                    var text            = buttonReference.TextButton;
 
                     Sequence sequence = DOTween.Sequence();
 
-                    sequence.Append(image.DOFade(0.0f, 0.25f));
-                    sequence.Join(text.DOFade(0.0f, 0.25f));
                     sequence.AppendCallback(() => buttonReference.Populate(card));
-                    sequence.Append(text.DOFade(1.0f, 0.25f));
+                    sequence.Join(buttonReference.transform.DOPunchPosition(Vector3.up * 50, 0.25f));
+                    sequence.Join(text.DOFade(1.0f, 0.25f));
                     sequence.Join(image.DOFade(1.0f, 0.25f));
 
-                    yield return new WaitForSeconds (0.20f);
+                    yield return new WaitForSeconds(0.20f);
                 }
             }
 
@@ -69,16 +67,27 @@ namespace Managers
             ShuffleAnswers();
         }
 
-        public void ShowListAnswers()
+        public void EnableListAnswers()
         {
-            gameObject.SetActive(true);
-            // DOTween.To(p_value => m_canvasGroup.alpha = p_value, 0.0f, 1.0f, m_speedFadeListAnswers);
+            m_canvasGroup.interactable   = true;
+            m_canvasGroup.blocksRaycasts = true;
+        }
+
+        public void DisableListAnswers()
+        {
+            m_canvasGroup.interactable   = false;
+            m_canvasGroup.blocksRaycasts = false;
         }
 
         public void HideListAnswers()
         {
-            // DOTween.To(p_value => m_canvasGroup.alpha = p_value, 1.0f, 0.0f, m_speedFadeListAnswers);
-            gameObject.SetActive(false);
+            foreach (var reference in m_answerButtonReferences)
+            {
+                Sequence sequence = DOTween.Sequence();
+
+                sequence.Append(reference.ImageButton.DOFade(0.0f, 0.25f));
+                sequence.Join(reference.TextButton.DOFade(0.0f, 0.25f));
+            }
         }
     }
 }

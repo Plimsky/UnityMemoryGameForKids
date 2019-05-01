@@ -22,10 +22,8 @@ namespace Managers
         [SerializeField] private TMP_Text         m_scoreText;
         [SerializeField] private float            m_jumpScoreAnim = 20.0f;
 
-        private List<TrainingSo> m_tmpListOfTrainings;
         private TrainingSo       m_selectedTraining;
-
-
+        private int m_selectedTrainingIndex;
         private int m_actualScore;
 
         private void Start()
@@ -34,12 +32,8 @@ namespace Managers
                 Instance = this;
             else
                 Destroy(gameObject);
-
-            int selectedTrainingIndex = Random.Range(0, m_listOfTrainings.Count - 1);
-
-            m_tmpListOfTrainings = new List<TrainingSo>(m_listOfTrainings);
-            m_selectedTraining   = m_tmpListOfTrainings[selectedTrainingIndex];
-            m_tmpListOfTrainings.RemoveAt(selectedTrainingIndex);
+            
+            m_selectedTraining   = m_listOfTrainings[0];
 
             CurrentTrainingState              =  State.REVIEW;
             AnswerButtonReference.GoodAnswser += GoodAnswser;
@@ -52,7 +46,10 @@ namespace Managers
             if (CardManager.Instance.IsEndOfTrainingDeck())
                 SelectNextTraining();
             else
+            {
                 CardManager.Instance.NextTestCard();
+                ReviewManager.Instance.ShuffleAnswers();
+            }
 
             IncreaseScore();
             UpdateScoreView();
@@ -60,14 +57,15 @@ namespace Managers
 
         private void SelectNextTraining()
         {
-            int selectedTrainingIndex = Random.Range(0, m_listOfTrainings.Count - 1);
+            ++m_selectedTrainingIndex;
 
-            m_selectedTraining = m_tmpListOfTrainings[selectedTrainingIndex];
+            if (m_selectedTrainingIndex == m_listOfTrainings.Count)
+                m_selectedTrainingIndex = 0;
+         
+            m_selectedTraining = m_listOfTrainings[m_selectedTrainingIndex];
             ReviewManager.Instance.HideListAnswers();
+            ReviewManager.Instance.DisableListAnswers();
             CardManager.Instance.NextTraining(m_selectedTraining);
-
-            if (m_tmpListOfTrainings.Count == 0)
-                m_tmpListOfTrainings = new List<TrainingSo>(m_listOfTrainings);
 
             CurrentTrainingState = State.REVIEW;
         }
@@ -96,7 +94,7 @@ namespace Managers
         {
             CurrentTrainingState = State.TEST;
             CardManager.Instance.DisableTouchCard();
-            ReviewManager.Instance.ShowListAnswers();
+            ReviewManager.Instance.EnableListAnswers();
             ReviewManager.Instance.PopulateAnswers(m_selectedTraining);
         }
     }

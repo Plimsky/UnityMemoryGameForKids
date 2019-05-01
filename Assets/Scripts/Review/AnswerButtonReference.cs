@@ -12,6 +12,9 @@ namespace Review
     {
         public static Action GoodAnswser;
 
+        public Image ImageButton => m_image;
+        public TMP_Text TextButton => m_answerText;
+
         [Header("References")] [SerializeField]
         private Button m_button;
 

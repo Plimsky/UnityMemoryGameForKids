@@ -39,6 +39,16 @@ namespace Managers
                 for (int i = 0; i < m_answerButtonReferences.Count; ++i)
                 {
                     m_answerButtonReferences[i].Populate(m_currentTraining.m_listOfCards[i]);
+//                    var image = m_answerButtonReferences[i].ImageButton;
+//                    var text = m_answerButtonReferences[i].TextButton;
+
+//                    Sequence sequence = DOTween.Sequence();
+//
+//                    sequence.Append(image.DOFade(0.0f, 0.25f));
+//                    sequence.Join(text.DOFade(0.0f, 0.25f));
+//                    sequence.AppendCallback(() => m_answerButtonReferences[i].Populate(m_currentTraining.m_listOfCards[i]));
+//                    sequence.Append(text.DOFade(1.0f, 0.25f));
+//                    sequence.Join(image.DOFade(1.0f, 0.25f));
                 }
             }
         }
